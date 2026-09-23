@@ -33,7 +33,7 @@ function checkAdminAuth() {
     const role = localStorage.getItem('lunette_role');
 
     if (!adminToken || role !== 'ROLE_ADMIN') {
-        window.location.href = './login.html?redirect=admin';
+        window.location.href = '/login.html?redirect=admin';
         return;
     }
 
@@ -736,7 +736,7 @@ function adminLogout() {
         localStorage.removeItem('lunette_token');
         localStorage.removeItem('lunette_role');
         localStorage.removeItem('lunette_username');
-        window.location.href = './login.html';
+        window.location.href = '/login.html';
     });
 }
 
