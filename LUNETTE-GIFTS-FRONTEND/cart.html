@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart & Checkout — Lunette Gifts</title>
+    <link rel="stylesheet" href="./css/boutique-theme.css">
+</head>
+<body style="background-color: var(--bg-ivory);">
+
+    <!-- Top Notice Bar -->
+    <div class="top-bar">
+        🌸 Delivery charged only ONCE per order • Flat ₹70 for Madurai / ₹100 Outside Madurai
+    </div>
+
+    <!-- Site Header -->
+    <header class="site-header">
+        <div class="header-container">
+            <a href="./" class="brand-logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M12 2a5 5 0 0 0-5 5c0 4 5 9 5 9s5-5 5-9a5 5 0 0 0-5-5z"/>
+                    <circle cx="12" cy="7" r="2"/>
+                    <path d="M7 14c-3 0-5 2-5 4v2h20v-2c0-2-2-4-5-4"/>
+                </svg>
+                <div>
+                    <span class="brand-title">Lunette Gifts</span>
+                    <span class="brand-subtitle">Shopping Cart</span>
+                </div>
+            </a>
+            <div class="header-actions">
+                <a href="./" class="btn-secondary" style="font-size: 12px; padding: 8px 18px;">➔ Continue Shopping</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="section" style="max-width: 1100px;">
+        <h2 class="section-title" style="margin-bottom: 24px;">Your Personalized Gift Cart</h2>
+
+        <!-- Empty Cart State -->
+        <div id="cart-empty-notice" style="display: none; text-align: center; padding: 80px 20px; background: #FFFFFF; border-radius: var(--radius-lg); border: 1px solid var(--border-soft);">
+            <div style="font-size: 40px; margin-bottom: 12px;">🌸</div>
+            <h3 style="font-size: 22px; color: var(--text-main); margin-bottom: 8px;">Your cart is currently empty</h3>
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 24px;">
+                Your memories are waiting to become something beautiful.
+            </p>
+            <a href="./" class="btn-primary">Browse Handcrafted Gifts</a>
+        </div>
+
+        <!-- Cart Grid Layout -->
+        <div id="checkout-form-container" style="display: grid; grid-template-columns: 1.3fr 0.9fr; gap: 36px;">
+
+            <!-- Left Column: Cart Items & Shipping Details -->
+            <div>
+                <!-- Items Box -->
+                <div style="background: #FFFFFF; border: 1px solid var(--border-soft); border-radius: var(--radius-md); padding: 24px; margin-bottom: 24px;">
+                    <h3 style="font-size: 17px; margin-bottom: 16px; border-bottom: 1px solid var(--border-soft); padding-bottom: 10px;">
+                        Configured Items & Uploads
+                    </h3>
+                    <div id="cart-items-container">
+                        <!-- Populated by cart.js -->
+                    </div>
+                </div>
+
+                <!-- Shipping Address Form -->
+                <div style="background: #FFFFFF; border: 1px solid var(--border-soft); border-radius: var(--radius-md); padding: 24px;">
+                    <h3 style="font-size: 17px; margin-bottom: 16px; border-bottom: 1px solid var(--border-soft); padding-bottom: 10px;">
+                        Delivery & Customer Information
+                    </h3>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                        <div>
+                            <label style="font-size: 12px; font-weight: 600;">Full Name *</label>
+                            <input type="text" class="input-field" id="shipping-name" placeholder="e.g. Kavya Ramesh" required>
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; font-weight: 600;">WhatsApp / Phone Number *</label>
+                            <input type="tel" class="input-field" id="shipping-phone" placeholder="e.g. 9843210987" required>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 10px;">
+                        <label style="font-size: 12px; font-weight: 600;">Email Address (Optional)</label>
+                        <input type="email" class="input-field" id="shipping-email" placeholder="kavya@example.com">
+                    </div>
+
+                    <div style="margin-top: 10px;">
+                        <label style="font-size: 12px; font-weight: 600;">Delivery Address *</label>
+                        <textarea class="input-field" id="shipping-address" rows="3" placeholder="Door No, Street name, Landmark..." required></textarea>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-top: 10px;">
+                        <div>
+                            <label style="font-size: 12px; font-weight: 600;">PIN Code *</label>
+                            <input type="text" class="input-field" id="shipping-pincode" placeholder="625001" onblur="verifyPinCode()" oninput="if(this.value.length >= 6) verifyPinCode();" required>
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; font-weight: 600;">City</label>
+                            <input type="text" class="input-field" id="shipping-city" placeholder="Madurai">
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; font-weight: 600;">State</label>
+                            <input type="text" class="input-field" id="shipping-state" value="Tamil Nadu">
+                        </div>
+                    </div>
+
+                    <div id="pincode-status-message" style="margin-top: 8px;"></div>
+
+                    <div style="margin-top: 14px;">
+                        <label style="font-size: 12px; font-weight: 600;">Gift Message / Special Notes</label>
+                        <input type="text" class="input-field" id="order-notes" placeholder="e.g. Please wrap in blush ribbon with anniversary tag">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Summary, Coupons & UPI Scan & Pay -->
+            <div>
+                <!-- Order Summary & Coupon -->
+                <div style="background: #FFFFFF; border: 1px solid var(--border-soft); border-radius: var(--radius-md); padding: 24px; margin-bottom: 24px;">
+                    <h3 style="font-size: 17px; margin-bottom: 16px; border-bottom: 1px solid var(--border-soft); padding-bottom: 10px;">
+                        Order Summary
+                    </h3>
+
+                    <!-- Coupon Code Input -->
+                    <div style="display: flex; gap: 8px; margin-bottom: 18px;">
+                        <input type="text" class="input-field" id="coupon-code-input" placeholder="Coupon Code (e.g. WELCOME10)" style="margin: 0; text-transform: uppercase;">
+                        <button type="button" class="btn-secondary" onclick="applyCoupon()" style="padding: 0 18px;">Apply</button>
+                    </div>
+                    <div id="coupon-message" style="font-size: 12px; margin-top: -12px; margin-bottom: 14px;"></div>
+
+                    <div class="cart-row">
+                        <span>Items Subtotal</span>
+                        <strong id="summary-subtotal">₹0</strong>
+                    </div>
+                    <div class="cart-row" id="summary-discount-row" style="display: none; color: #5B7B66;">
+                        <span>Coupon Discount</span>
+                        <strong id="summary-discount">-₹0</strong>
+                    </div>
+                    <div class="cart-row">
+                        <span>
+                            Delivery Charge
+                            <small style="display: block; font-size: 11px; color: #7C9D86;">Charged once per order</small>
+                        </span>
+                        <strong id="summary-delivery">₹70</strong>
+                    </div>
+                    <div class="cart-row total">
+                        <span>Grand Total</span>
+                        <span id="summary-total" style="color: var(--rose-600);">₹0</span>
+                    </div>
+                </div>
+
+                <!-- UPI Payment (Scan & Pay with Provided QR) -->
+                <div style="background: #FFFFFF; border: 1.5px solid var(--rose-200); border-radius: var(--radius-md); padding: 24px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+                        <h3 style="font-size: 17px; color: var(--text-main);">
+                            UPI Scan & Pay
+                        </h3>
+                        <span class="status-badge confirmed">Instant UPI</span>
+                    </div>
+
+                    <p style="font-size: 12px; color: #786C68; margin-bottom: 14px;">
+                        Scan the official QR below using GPay, PhonePe, Paytm, or any UPI app.
+                    </p>
+
+                    <!-- Real Supplied QR Code Image -->
+                    <div style="text-align: center; background: #FAF7F2; border-radius: var(--radius-md); padding: 18px; border: 1px solid var(--border-soft); margin-bottom: 16px;">
+                        <img src="./images/upi-qr.png" alt="Lunette Gifts UPI QR" style="max-width: 210px; width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.06);">
+                        <div style="margin-top: 10px;">
+                            <span style="font-size: 11px; color: #786C68; display: block;">UPI ID:</span>
+                            <strong style="font-size: 14px; color: #2C2523;">haring478-1@okicici</strong>
+                        </div>
+                        <button type="button" class="btn-secondary" onclick="copyUpiId()" style="margin-top: 8px; font-size: 11px; padding: 6px 14px;">
+                            📋 Copy UPI ID
+                        </button>
+                    </div>
+
+                    <!-- Payment Proof & Reference Input -->
+                    <div style="margin-bottom: 14px;">
+                        <label style="font-size: 12px; font-weight: 600; color: #2C2523;">UPI Reference / Transaction ID</label>
+                        <input type="text" class="input-field" id="payment-reference" placeholder="e.g. UPI-1234567890">
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="font-size: 12px; font-weight: 600; color: #2C2523; display: block; margin-bottom: 6px;">Upload Payment Screenshot (Proof)</label>
+                        <label class="btn-secondary" style="font-size: 12px; padding: 8px 16px; cursor: pointer; display: inline-block;">
+                            📷 Upload Screenshot
+                            <input type="file" accept="image/*" style="display: none;" onchange="handlePaymentProofUpload(this)">
+                        </label>
+                        <span id="payment-proof-status" style="font-size: 11px; color: #786C68; margin-left: 8px;"></span>
+                    </div>
+
+                    <button type="button" class="btn-primary" id="place-order-submit-btn" onclick="placeCustomerOrder(event)" style="width: 100%; justify-content: center; padding: 16px;">
+                        Complete Order & Submit Payment ➔
+                    </button>
+                    <p style="font-size: 11px; text-align: center; color: #A39692; margin-top: 10px;">
+                        🔒 Secure order handling • Direct artisanal workshop fulfillment
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         ORDER CONFIRMATION MODAL
+         ========================================================= -->
+    <div class="modal-backdrop" id="order-confirmation-modal">
+        <div class="modal-container" style="max-width: 520px; text-align: center; padding: 36px 28px;">
+            <div style="font-size: 50px; margin-bottom: 14px;">🌸</div>
+            <h2 style="font-family: 'Playfair Display', serif; font-size: 26px; color: var(--text-main); margin-bottom: 8px;">
+                Thank You for Your Order!
+            </h2>
+            <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;">
+                Your memories are in caring hands. Your order has been placed successfully.
+            </p>
+
+            <div style="background: #FAF7F2; border: 1.5px dashed #E892A2; border-radius: var(--radius-md); padding: 18px; margin-bottom: 24px;">
+                <span style="font-size: 12px; color: #786C68; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Order Number</span>
+                <div id="confirm-order-number" style="font-size: 24px; font-weight: 700; color: var(--rose-600); margin-top: 4px;">
+                    LG-10026
+                </div>
+                <small style="color: #5B7B66; font-size: 12px;">Payment verification in progress</small>
+            </div>
+
+            <div style="display: flex; gap: 12px; justify-content: center;">
+                <a href="#" id="confirm-track-link" class="btn-primary">
+                    Track Your Order
+                </a>
+                <a href="./" class="btn-secondary">
+                    Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="./js/config.js"></script>
+    <script src="./js/boutique.js"></script>
+    <script src="./js/cart.js"></script>
+</body>
+</html>

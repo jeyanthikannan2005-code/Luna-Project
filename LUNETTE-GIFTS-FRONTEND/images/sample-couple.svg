@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="100%" height="100%">
+  <defs>
+    <linearGradient id="sunset" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFD6A5"/>
+      <stop offset="50%" stop-color="#FDFFB6"/>
+      <stop offset="100%" stop-color="#CAFFBF"/>
+    </linearGradient>
+  </defs>
+  <rect width="300" height="300" fill="url(#sunset)"/>
+  <circle cx="150" cy="110" r="50" fill="#FFADAD" opacity="0.8"/>
+  <ellipse cx="120" cy="220" rx="35" ry="60" fill="#7C9D86"/>
+  <ellipse cx="180" cy="220" rx="35" ry="60" fill="#C46D7E"/>
+  <circle cx="120" cy="140" r="22" fill="#FFE5D9"/>
+  <circle cx="180" cy="140" r="22" fill="#FFE5D9"/>
+  <text x="150" y="285" font-family="'Playfair Display', serif" font-size="14" fill="#583A2E" text-anchor="middle">Together Always</text>
+</svg>

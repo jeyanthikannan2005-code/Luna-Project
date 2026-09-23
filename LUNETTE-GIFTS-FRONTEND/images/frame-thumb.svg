@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="frameWood" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8C5836"/>
+      <stop offset="50%" stop-color="#A56E47"/>
+      <stop offset="100%" stop-color="#6E4124"/>
+    </linearGradient>
+    <linearGradient id="roseBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FDF8F5"/>
+      <stop offset="100%" stop-color="#F7E6E9"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" rx="20" fill="#FAF7F2"/>
+  <!-- Outer Frame -->
+  <rect x="50" y="50" width="300" height="300" rx="12" fill="url(#frameWood)" stroke="#5A3319" stroke-width="6"/>
+  <rect x="75" y="75" width="250" height="250" rx="6" fill="#FDFBF7" stroke="#D1BBA8" stroke-width="2"/>
+  <!-- Picture Area -->
+  <rect x="95" y="95" width="210" height="210" fill="url(#roseBg)"/>
+  <!-- Artwork Inside Frame -->
+  <circle cx="200" cy="170" r="45" fill="#E892A2" opacity="0.4"/>
+  <path d="M130 270 Q 200 180 270 270 Z" fill="#7C9D86" opacity="0.6"/>
+  <path d="M170 270 Q 220 210 280 270 Z" fill="#C46D7E" opacity="0.5"/>
+  <circle cx="200" cy="155" r="16" fill="#D9778A"/>
+  <path d="M196 170 Q 200 185 204 170 Q 215 178 206 186 Q 200 195 194 186 Q 185 178 196 170 Z" fill="#5B7B66"/>
+  <!-- Floral Corners -->
+  <g fill="#E892A2" opacity="0.85">
+    <circle cx="85" cy="85" r="6"/>
+    <circle cx="80" cy="85" r="4"/>
+    <circle cx="90" cy="85" r="4"/>
+    <circle cx="85" cy="80" r="4"/>
+    <circle cx="85" cy="90" r="4"/>
+    <circle cx="315" cy="85" r="6"/>
+    <circle cx="310" cy="85" r="4"/>
+    <circle cx="320" cy="85" r="4"/>
+    <circle cx="315" cy="80" r="4"/>
+    <circle cx="315" cy="90" r="4"/>
+  </g>
+  <text x="200" y="325" font-family="'Playfair Display', serif" font-size="14" fill="#6E4124" text-anchor="middle" font-weight="600">Memory Frame 5×7</text>
+</svg>

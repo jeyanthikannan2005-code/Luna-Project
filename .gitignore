@@ -1,0 +1,20 @@
+# Maven
+**/target/
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Java
+*.class
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local application data
+**/data/

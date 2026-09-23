@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Order-Entry System — Lunette Gifts</title>
+    <link rel="stylesheet" href="../css/boutique-theme.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo-title">LUNETTE GIFTS</div>
+                <div class="sidebar-logo-role">Staff Order-Entry</div>
+            </div>
+
+            <ul class="sidebar-nav">
+                <li class="sidebar-link active" onclick="switchStaffTab('staff-tab-entry')">
+                    <span>📝</span> Walk-in / Phone Order
+                </li>
+                <li class="sidebar-link" onclick="switchStaffTab('staff-tab-orders')">
+                    <span>📦</span> Orders & Status
+                </li>
+                <li class="sidebar-link" onclick="switchStaffTab('staff-tab-inventory')">
+                    <span>🏷️</span> Live Stock & Inventory
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <div>
+                    <span style="font-size: 11px; color: #786C68; display: block;">Logged in as:</span>
+                    <strong class="user-tag" id="staff-username-display">Staff</strong>
+                </div>
+                <button class="logout-btn" onclick="staffLogout()">Logout</button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Top Header -->
+            <div class="dashboard-header">
+                <div>
+                    <h1 class="dashboard-title">Staff Workshop Terminal</h1>
+                    <p class="dashboard-desc">Assist walk-in clients, intake customer photos, and track production progress.</p>
+                </div>
+                <a href="../" target="_blank" class="btn-secondary" style="font-size: 12px; padding: 8px 16px;">
+                    👁️ Open Boutique Store
+                </a>
+            </div>
+
+            <!-- TAB 1: ORDER ENTRY SYSTEM -->
+            <div id="staff-tab-entry" class="staff-pane">
+                <div class="dash-panel">
+                    <h2 style="font-size: 18px; color: #2C2523; margin-bottom: 20px;">
+                        New Customer Walk-in / Phone Order
+                    </h2>
+
+                    <!-- Step 1: Customer Lookup / Register -->
+                    <div style="background: #FAF7F2; border: 1px solid #EADBCE; border-radius: 12px; padding: 20px; margin-bottom: 24px;">
+                        <h3 style="font-size: 15px; margin-bottom: 12px;">Step 1: Customer Identification</h3>
+                        <div style="display: flex; gap: 10px; max-width: 480px;">
+                            <input type="text" class="input-field" id="staff-cust-search" placeholder="Enter Phone or Email" style="margin: 0;">
+                            <button type="button" class="btn-secondary" onclick="lookupCustomer()" style="white-space: nowrap;">Find Customer</button>
+                        </div>
+                        <div id="staff-cust-result"></div>
+                    </div>
+
+                    <!-- Step 2: Product & Dynamic Photo Slots -->
+                    <form id="staff-order-form" onsubmit="submitStaffOrder(event)">
+                        <div style="background: #FAF7F2; border: 1px solid #EADBCE; border-radius: 12px; padding: 20px; margin-bottom: 24px;">
+                            <h3 style="font-size: 15px; margin-bottom: 14px;">Step 2: Choose Product & Customization</h3>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                                <div>
+                                    <label style="font-size: 12px; font-weight: 600;">Product Category & Type *</label>
+                                    <select class="input-field" id="staff-product-select" onchange="onStaffProductChange(this.value)" required>
+                                        <option value="">-- Choose Product --</option>
+                                    </select>
+                                </div>
+
+                                <div id="staff-variant-group" style="display: none;">
+                                    <label style="font-size: 12px; font-weight: 600;">Variant & Size *</label>
+                                    <select class="input-field" id="staff-variant-select" onchange="onStaffVariantChange(this.value)">
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 16px;">
+                                <div>
+                                    <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 6px;">Quantity</label>
+                                    <div class="qty-controller">
+                                        <button type="button" class="qty-btn" onclick="adjustStaffQty(-1)">−</button>
+                                        <input type="text" class="qty-input" id="staff-qty-input" value="1" readonly>
+                                        <button type="button" class="qty-btn" onclick="adjustStaffQty(1)">+</button>
+                                    </div>
+                                </div>
+
+                                <div style="margin-top: 18px;">
+                                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                        <input type="checkbox" id="staff-customization-check" onchange="calcStaffPrice()">
+                                        <span style="font-size: 13px; font-weight: 600;">Add Customization</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div style="margin-bottom: 16px;">
+                                <label style="font-size: 12px; font-weight: 600;">Customization Instructions / Text</label>
+                                <input type="text" class="input-field" id="staff-custom-instructions" placeholder="e.g. Inscribe 'Happy 25th Anniversary' in cursive">
+                            </div>
+
+                            <!-- Dynamic Photo Slots Grid -->
+                            <div style="border-top: 1px dashed #DBC8B8; padding-top: 16px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                    <strong style="font-size: 14px;">Customer Photos Upload</strong>
+                                    <span id="staff-upload-counter" style="background: #C46D7E; color: #fff; font-size: 11px; padding: 2px 10px; border-radius: 999px;">0 / 0 photos</span>
+                                </div>
+                                <div id="staff-photo-slots" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                    <!-- Dynamic slots populated by staff.js -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Delivery & Payment Details -->
+                        <div style="background: #FAF7F2; border: 1px solid #EADBCE; border-radius: 12px; padding: 20px; margin-bottom: 24px;">
+                            <h3 style="font-size: 15px; margin-bottom: 14px;">Step 3: Shipping & Payment Intake</h3>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+                                <div>
+                                    <label style="font-size: 12px; font-weight: 600;">Customer Full Name *</label>
+                                    <input type="text" class="input-field" id="staff-order-name" required>
+                                </div>
+                                <div>
+                                    <label style="font-size: 12px; font-weight: 600;">Phone / WhatsApp *</label>
+                                    <input type="tel" class="input-field" id="staff-order-phone" required>
+                                </div>
+                            </div>
+
+                            <div style="margin-bottom: 14px;">
+                                <label style="font-size: 12px; font-weight: 600;">Email</label>
+                                <input type="email" class="input-field" id="staff-order-email">
+                            </div>
+
+                            <div style="margin-bottom: 14px;">
+                                <label style="font-size: 12px; font-weight: 600;">Shipping Address *</label>
+                                <textarea class="input-field" id="staff-order-address" rows="2" required></textarea>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+                                <div>
+                                    <label style="font-size: 12px; font-weight: 600;">PIN Code *</label>
+                                    <input type="text" class="input-field" id="staff-order-pin" placeholder="625001" required>
+                                </div>
+                                <div>
+                                    <label style="font-size: 12px; font-weight: 600;">Delivery Zone *</label>
+                                    <select class="input-field" id="staff-zone-select" onchange="calcStaffPrice()">
+                                        <option value="MADURAI">Madurai Local (Flat ₹70)</option>
+                                        <option value="OUTSIDE_MADURAI">Outside Madurai (Flat ₹100)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+                                <div>
+                                    <label style="font-size: 12px; font-weight: 600;">Payment Status *</label>
+                                    <select class="input-field" id="staff-payment-status-select">
+                                        <option value="PENDING">Pending Payment</option>
+                                        <option value="CONFIRMED">Confirmed / Paid</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="font-size: 12px; font-weight: 600;">Payment Reference / Notes</label>
+                                    <input type="text" class="input-field" id="staff-payment-ref" placeholder="e.g. Cash received / UPI ID">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label style="font-size: 12px; font-weight: 600;">Internal Staff Notes</label>
+                                <input type="text" class="input-field" id="staff-order-notes" placeholder="e.g. Customer will pick up from store on Friday">
+                            </div>
+                        </div>
+
+                        <!-- Price Breakdown & Submit -->
+                        <div style="display: flex; align-items: center; justify-content: space-between; background: #FFFFFF; border: 1px solid #EFE4D8; border-radius: 12px; padding: 20px;">
+                            <div>
+                                <span style="font-size: 12px; color: #786C68;">Items Subtotal: <strong id="staff-order-subtotal">₹0</strong> | Delivery: <strong id="staff-order-delivery">₹70</strong></span>
+                                <div style="font-size: 22px; font-weight: 700; color: #2C2523;">
+                                    Total: <span id="staff-order-total" style="color: #C46D7E;">₹70</span>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-primary" style="padding: 14px 28px;">
+                                Submit Staff Order ➔
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- TAB 2: ORDERS LIST & STATUS UPDATES -->
+            <div id="staff-tab-orders" class="staff-pane" style="display: none;">
+                <div class="dash-panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">Assigned & Active Workshop Orders</h2>
+                        <button class="btn-action" onclick="loadStaffOrders()">↻ Refresh</button>
+                    </div>
+
+                    <table class="dash-table">
+                        <thead>
+                            <tr>
+                                <th>Order Number</th>
+                                <th>Customer</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Payment</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="staff-orders-tbody">
+                            <!-- Populated via staff.js -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB 3: LIVE INVENTORY -->
+            <div id="staff-tab-inventory" class="staff-pane" style="display: none;">
+                <div class="dash-panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">Workshop Stock Availability</h2>
+                        <button class="btn-action" onclick="loadStaffInventory()">↻ Refresh</button>
+                    </div>
+
+                    <table class="dash-table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Available Stock</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="staff-inventory-tbody">
+                            <!-- Populated via staff.js -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal: Update Order Status -->
+    <div class="modal-backdrop" id="staff-status-modal">
+        <div class="modal-container" style="max-width: 440px; padding: 24px;">
+            <h3 style="font-size: 18px; margin-bottom: 16px;">Update Order Status</h3>
+            <input type="hidden" id="staff-status-order-id">
+
+            <div style="margin-bottom: 14px;">
+                <label style="font-size: 12px; font-weight: 600;">Lifecycle Status</label>
+                <select class="input-field" id="staff-new-status-select">
+                    <option value="ORDER_PLACED">ORDER_PLACED</option>
+                    <option value="PAYMENT_CONFIRMED">PAYMENT_CONFIRMED</option>
+                    <option value="DESIGN_PENDING">DESIGN_PENDING</option>
+                    <option value="DESIGN_APPROVED">DESIGN_APPROVED</option>
+                    <option value="IN_PRODUCTION">IN_PRODUCTION</option>
+                    <option value="READY">READY</option>
+                    <option value="OUT_FOR_DELIVERY">OUT_FOR_DELIVERY</option>
+                    <option value="DELIVERED">DELIVERED</option>
+                    <option value="CANCELLED">CANCELLED</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="font-size: 12px; font-weight: 600;">Status Notes (Visible in Tracking)</label>
+                <input type="text" class="input-field" id="staff-status-notes" placeholder="e.g. Frame moulding cut & joined">
+            </div>
+
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button class="btn-secondary" onclick="closeStaffStatusModal()">Cancel</button>
+                <button class="btn-primary" onclick="updateStaffOrderStatus()">Save Status</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/config.js"></script>
+    <script src="../js/boutique.js"></script>
+    <script src="../js/staff.js"></script>
+    <script>
+        function switchStaffTab(paneId) {
+            document.querySelectorAll('.staff-pane').forEach(p => p.style.display = 'none');
+            document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+
+            const target = document.getElementById(paneId);
+            if (target) target.style.display = 'block';
+
+            if (event && event.currentTarget) {
+                event.currentTarget.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account — Lunette Gifts</title>
+    <link rel="stylesheet" href="../css/boutique-theme.css">
+</head>
+<body style="background-color: var(--bg-ivory);">
+
+    <!-- Header -->
+    <header class="site-header">
+        <div class="header-container">
+            <a href="../" class="brand-logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M12 2a5 5 0 0 0-5 5c0 4 5 9 5 9s5-5 5-9a5 5 0 0 0-5-5z"/>
+                    <circle cx="12" cy="7" r="2"/>
+                </svg>
+                <div>
+                    <span class="brand-title">Lunette Gifts</span>
+                    <span class="brand-subtitle">Customer Portal</span>
+                </div>
+            </a>
+            <div class="header-actions">
+                <a href="../" class="btn-secondary" style="font-size: 12px; padding: 8px 18px;">➔ Boutique Home</a>
+                <button onclick="logoutCustomer()" class="btn-secondary" style="font-size: 12px; padding: 8px 18px; color: #A85364;">Sign Out</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="section" style="max-width: 1000px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 14px;">
+            <div>
+                <span class="section-subtitle">Customer Space</span>
+                <h1 class="section-title" id="cust-welcome-name">My Keepsake Orders</h1>
+            </div>
+            <a href="../cart.html" class="btn-primary" style="font-size: 13px; padding: 10px 20px;">
+                View Cart ➔
+            </a>
+        </div>
+
+        <!-- Orders Table / Cards -->
+        <div style="background: #FFFFFF; border: 1px solid var(--border-soft); border-radius: var(--radius-lg); padding: 28px; box-shadow: var(--shadow-sm);">
+            <h3 style="font-size: 18px; margin-bottom: 18px; color: var(--text-main);">Order History</h3>
+
+            <div id="cust-orders-container">
+                <div style="text-align: center; padding: 40px; color: #786C68;">
+                    Loading your orders...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/boutique.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('lunette_token');
+            if (!token) {
+                window.location.href = '/login.html';
+                return;
+            }
+
+            const username = localStorage.getItem('lunette_username') || 'Valued Customer';
+            document.getElementById('cust-welcome-name').textContent = `Hello, ${username}! 🌸`;
+
+            loadCustomerOrders(token);
+        });
+
+        async function loadCustomerOrders(token) {
+            const container = document.getElementById('cust-orders-container');
+            try {
+                const res = await fetch(apiUrl('/api/customer/orders'), {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!res.ok) throw new Error('Failed to load orders');
+                const orders = await res.json();
+
+                if (orders.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 50px 20px;">
+                            <div style="font-size: 36px; margin-bottom: 10px;">🌸</div>
+                            <p style="font-family: 'Playfair Display', serif; font-size: 18px; color: #8C6D54;">No orders yet</p>
+                            <p style="font-size: 13px; color: #786C68; margin: 6px 0 20px;">Your memories are waiting to become something beautiful.</p>
+                            <a href="../" class="btn-primary" style="font-size: 13px; padding: 10px 22px;">Start Shopping</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = orders.map(o => `
+                    <div style="border: 1px solid #EFE4D8; border-radius: 12px; padding: 20px; margin-bottom: 16px; background: #FAF7F2;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                            <div>
+                                <span style="font-size: 11px; color: #786C68; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Order Number</span>
+                                <div style="font-size: 18px; font-weight: 700; color: #C46D7E;">${o.orderNumber}</div>
+                                <small style="color: #786C68;">Date: ${o.createdAt ? o.createdAt.substring(0, 10) : ''}</small>
+                            </div>
+                            <div style="text-align: right;">
+                                <span class="status-badge ${getStatusBadgeClass(o.orderStatus)}">${o.orderStatus}</span>
+                                <div style="font-size: 16px; font-weight: 700; color: #2C2523; margin-top: 4px;">Total: ₹${o.totalAmount}</div>
+                                <small style="color: #5B7B66;">Delivery: ₹${o.deliveryCharge} (${o.deliveryZone})</small>
+                            </div>
+                        </div>
+
+                        <!-- Items Preview -->
+                        <div style="background: #FFFFFF; border-radius: 8px; padding: 12px 16px; margin-bottom: 12px;">
+                            ${o.items ? o.items.map(item => `
+                                <div style="display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0;">
+                                    <span><strong>${item.productName}</strong> (${item.variantName}) × ${item.quantity}</span>
+                                    <span>₹${item.itemSubtotal}</span>
+                                </div>
+                            `).join('') : ''}
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 12px; color: #786C68;">
+                                Payment: <strong>${o.paymentStatus}</strong>
+                            </span>
+                            <a href="../track.html?order=${o.orderNumber}" class="btn-secondary" style="font-size: 12px; padding: 6px 16px;">
+                                View Tracking Timeline ➔
+                            </a>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (e) {
+                container.innerHTML = '<div style="color: #A85364; text-align: center; padding: 20px;">Could not load orders.</div>';
+            }
+        }
+
+        function getStatusBadgeClass(status) {
+            switch (status) {
+                case 'ORDER_PLACED': return 'placed';
+                case 'PAYMENT_PENDING': return 'pending';
+                case 'PAYMENT_CONFIRMED': return 'confirmed';
+                case 'IN_PRODUCTION': return 'production';
+                case 'READY': return 'ready';
+                case 'DELIVERED': return 'delivered';
+                default: return 'pending';
+            }
+        }
+
+        function logoutCustomer() {
+            localStorage.removeItem('lunette_token');
+            localStorage.removeItem('lunette_role');
+            localStorage.removeItem('lunette_username');
+            window.location.href = '/login.html';
+        }
+    </script>
+</body>
+</html>

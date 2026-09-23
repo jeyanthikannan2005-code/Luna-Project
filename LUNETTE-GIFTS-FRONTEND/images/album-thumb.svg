@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <rect width="400" height="400" rx="20" fill="#FAF7F2"/>
+  <!-- Ring Album Open Book Effect -->
+  <g transform="translate(45, 90)">
+    <!-- Back Cover Shadow -->
+    <rect x="25" y="10" width="270" height="200" rx="10" fill="#DCCBC0"/>
+    <!-- Album Pages -->
+    <rect x="30" y="15" width="260" height="190" rx="8" fill="#FFFFFF" stroke="#E5D9CE" stroke-width="2"/>
+    <!-- Photo on left page -->
+    <rect x="45" y="30" width="105" height="130" rx="6" fill="#FDF4F5" stroke="#F0DFE2" stroke-width="1.5"/>
+    <circle cx="97" cy="85" r="24" fill="#E892A2" opacity="0.65"/>
+    <path d="M60 150 Q 95 105 130 150 Z" fill="#7C9D86" opacity="0.6"/>
+    <!-- Decorative quote on right page -->
+    <text x="210" y="65" font-family="'Playfair Display', serif" font-size="14" fill="#8C5836" font-style="italic" text-anchor="middle">Every Moment</text>
+    <text x="210" y="85" font-family="'Playfair Display', serif" font-size="14" fill="#8C5836" font-style="italic" text-anchor="middle">with You</text>
+    <circle cx="210" cy="115" r="16" fill="#F8E5E8"/>
+    <path d="M210 108 C206 104 198 106 198 114 C198 122 210 128 210 128 C210 128 222 122 222 114 C222 106 214 104 210 108 Z" fill="#C46D7E"/>
+    <!-- Center Spine Metal Rings -->
+    <g fill="#B8977E" stroke="#5E4334" stroke-width="2">
+      <!-- Ring 1 -->
+      <ellipse cx="160" cy="35" rx="7" ry="14"/>
+      <!-- Ring 2 -->
+      <ellipse cx="160" cy="85" rx="7" ry="14"/>
+      <!-- Ring 3 -->
+      <ellipse cx="160" cy="135" rx="7" ry="14"/>
+      <!-- Ring 4 -->
+      <ellipse cx="160" cy="185" rx="7" ry="14"/>
+    </g>
+  </g>
+  <text x="200" y="335" font-family="'Playfair Display', serif" font-size="14" fill="#6E4124" text-anchor="middle" font-weight="600">Vintage Ring Album</text>
+  <text x="200" y="355" font-family="'Poppins', sans-serif" font-size="12" fill="#997C6E" text-anchor="middle">Ring ₹20 + ₹8/Card</text>
+</svg>

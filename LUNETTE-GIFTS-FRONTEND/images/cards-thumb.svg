@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <rect width="400" height="400" rx="20" fill="#FAF7F2"/>
+  <!-- Card Stack -->
+  <!-- Bottom Card -->
+  <g transform="rotate(-8 200 200)">
+    <rect x="130" y="110" width="140" height="190" rx="8" fill="#FFFFFF" stroke="#E2D6C8" stroke-width="2" filter="drop-shadow(0 4px 6px rgba(0,0,0,0.06))"/>
+    <rect x="140" y="120" width="120" height="135" rx="4" fill="#F3E7EA"/>
+    <circle cx="200" cy="180" r="25" fill="#7C9D86" opacity="0.5"/>
+    <line x1="150" y1="270" x2="210" y2="270" stroke="#C46D7E" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <!-- Middle Card -->
+  <g transform="rotate(5 200 200)">
+    <rect x="130" y="110" width="140" height="190" rx="8" fill="#FFFFFF" stroke="#E2D6C8" stroke-width="2" filter="drop-shadow(0 6px 10px rgba(0,0,0,0.08))"/>
+    <rect x="140" y="120" width="120" height="135" rx="4" fill="#FFF3F5"/>
+    <circle cx="200" cy="170" r="25" fill="#E892A2" opacity="0.6"/>
+    <line x1="150" y1="270" x2="230" y2="270" stroke="#7C9D86" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <!-- Top Front Card -->
+  <g>
+    <rect x="130" y="105" width="140" height="190" rx="8" fill="#FFFFFF" stroke="#D8C3B0" stroke-width="2.5" filter="drop-shadow(0 8px 16px rgba(0,0,0,0.12))"/>
+    <rect x="140" y="115" width="120" height="135" rx="4" fill="#FDF7F5"/>
+    <!-- Photo inside top card -->
+    <circle cx="200" cy="165" r="30" fill="#E892A2" opacity="0.8"/>
+    <path d="M165 240 Q 200 190 235 240 Z" fill="#5B7B66" opacity="0.7"/>
+    <path d="M190 240 Q 215 205 245 240 Z" fill="#C46D7E" opacity="0.6"/>
+    <text x="200" y="275" font-family="'Playfair Display', serif" font-size="12" fill="#5C473E" text-anchor="middle" font-weight="600">Pure Love</text>
+  </g>
+  <!-- Floral Branch decoration -->
+  <path d="M70 330 Q 110 300 130 330" stroke="#7C9D86" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <circle cx="90" cy="315" r="5" fill="#E892A2"/>
+  <circle cx="115" cy="312" r="5" fill="#E892A2"/>
+  <text x="200" y="345" font-family="'Poppins', sans-serif" font-size="13" fill="#8C6D62" text-anchor="middle" font-weight="500">Photo Cards (Min 10)</text>
+</svg>

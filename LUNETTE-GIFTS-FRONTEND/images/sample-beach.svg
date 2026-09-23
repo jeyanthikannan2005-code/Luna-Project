@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="100%" height="100%">
+  <defs>
+    <linearGradient id="ocean" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#A0C4FF"/>
+      <stop offset="50%" stop-color="#BDB2FF"/>
+      <stop offset="100%" stop-color="#FFC6FF"/>
+    </linearGradient>
+  </defs>
+  <rect width="300" height="300" fill="url(#ocean)"/>
+  <circle cx="230" cy="80" r="30" fill="#FFF3B0"/>
+  <path d="M0 210 Q 75 190 150 210 T 300 210 L 300 300 L 0 300 Z" fill="#E8D5B7"/>
+  <path d="M0 230 Q 80 215 160 230 T 300 230 L 300 300 L 0 300 Z" fill="#D8C3A5"/>
+  <text x="150" y="275" font-family="'Playfair Display', serif" font-size="14" fill="#6E5042" text-anchor="middle">Golden Shore</text>
+</svg>

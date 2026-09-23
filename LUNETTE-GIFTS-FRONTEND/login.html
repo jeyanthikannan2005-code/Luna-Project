@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In — Lunette Gifts</title>
+    <link rel="stylesheet" href="./css/boutique-theme.css">
+    <style>
+        .auth-container {
+            max-width: 440px;
+            margin: 60px auto;
+            padding: 36px 32px;
+            background: #FFFFFF;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-soft);
+            box-shadow: var(--shadow-md);
+        }
+        .demo-pills {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        .demo-pill {
+            flex: 1;
+            padding: 8px 10px;
+            border-radius: var(--radius-sm);
+            font-size: 11px;
+            font-weight: 600;
+            background: #FAF7F2;
+            border: 1px solid #EADBCE;
+            color: #5C524F;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .demo-pill:hover {
+            border-color: #C46D7E;
+            color: #C46D7E;
+            background: #FFF5F7;
+        }
+    </style>
+</head>
+<body style="background-color: var(--bg-ivory);">
+
+    <!-- Header -->
+    <header class="site-header">
+        <div class="header-container">
+            <a href="./" class="brand-logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M12 2a5 5 0 0 0-5 5c0 4 5 9 5 9s5-5 5-9a5 5 0 0 0-5-5z"/>
+                    <circle cx="12" cy="7" r="2"/>
+                </svg>
+                <div>
+                    <span class="brand-title">Lunette Gifts</span>
+                    <span class="brand-subtitle">Portal Access</span>
+                </div>
+            </a>
+            <div class="header-actions">
+                <a href="./" class="btn-secondary" style="font-size: 12px; padding: 8px 18px;">➔ Boutique Home</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="auth-container">
+        <div style="text-align: center; margin-bottom: 24px;">
+            <div style="font-size: 32px; margin-bottom: 6px;">🌸</div>
+            <h2 style="font-family: 'Playfair Display', serif; font-size: 24px; color: var(--text-main);">Welcome Back</h2>
+            <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Sign in to your customer, staff, or owner account</p>
+        </div>
+
+        <!-- Quick Demo Fill Buttons -->
+        <div style="margin-bottom: 16px;">
+            <span style="font-size: 11px; font-weight: 600; color: #786C68; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 6px;">Demo Quick Fill:</span>
+            <div class="demo-pills">
+                <div class="demo-pill" onclick="quickFill('admin', 'admin123')">
+                    👑 Owner (Admin)
+                </div>
+                <div class="demo-pill" onclick="quickFill('staff', 'staff123')">
+                    🛠️ Staff (Worker)
+                </div>
+                <div class="demo-pill" onclick="quickFill('demo_user', 'user123')">
+                    🛍️ Customer
+                </div>
+            </div>
+        </div>
+
+        <form id="login-form" onsubmit="handleLogin(event)">
+            <div style="margin-bottom: 14px;">
+                <label style="font-size: 12px; font-weight: 600; color: #2C2523;">Username</label>
+                <input type="text" class="input-field" id="login-username" required placeholder="Enter username">
+            </div>
+
+            <div style="margin-bottom: 22px;">
+                <label style="font-size: 12px; font-weight: 600; color: #2C2523;">Password</label>
+                <input type="password" class="input-field" id="login-password" required placeholder="Enter password">
+            </div>
+
+            <button type="submit" class="btn-primary" id="login-submit-btn" style="width: 100%; justify-content: center; padding: 14px;">
+                Sign In ➔
+            </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 20px; font-size: 13px; color: var(--text-muted);">
+            New customer? <a href="./register.html" style="color: var(--rose-500); font-weight: 600;">Create an account</a>
+        </div>
+    </div>
+
+    <script src="./js/config.js"></script>
+    <script src="./js/boutique.js"></script>
+    <script>
+        function quickFill(u, p) {
+            document.getElementById('login-username').value = u;
+            document.getElementById('login-password').value = p;
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            const u = document.getElementById('login-username').value.trim();
+            const p = document.getElementById('login-password').value;
+
+            const btn = document.getElementById('login-submit-btn');
+            btn.disabled = true;
+            btn.textContent = 'Verifying...';
+
+            try {
+                const res = await fetch(apiUrl('/api/auth/login'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: u, password: p })
+                });
+
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.error || 'Login failed');
+                }
+
+                const data = await res.json();
+                localStorage.setItem('lunette_token', data.token);
+                localStorage.setItem('lunette_role', data.role);
+                localStorage.setItem('lunette_username', data.username);
+                if (data.permissions) {
+                    localStorage.setItem('lunette_permissions', JSON.stringify(data.permissions));
+                }
+
+                showToast(`Welcome back, ${data.fullName || data.username}! 🌸`);
+
+                setTimeout(() => {
+                    if (data.role === 'ROLE_ADMIN') {
+                        window.location.href = '/admin/index.html';
+                    } else if (data.role === 'ROLE_WORKER') {
+                        window.location.href = '/staff/index.html';
+                    } else {
+                        window.location.href = '/customer/account.html';
+                    }
+                }, 400);
+            } catch (e) {
+                showToast(e.message, 'error');
+                btn.disabled = false;
+                btn.textContent = 'Sign In ➔';
+            }
+        }
+    </script>
+</body>
+</html>

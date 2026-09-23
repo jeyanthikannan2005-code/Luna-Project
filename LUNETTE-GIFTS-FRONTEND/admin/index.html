@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owner Dashboard — Lunette Gifts</title>
+    <link rel="stylesheet" href="../css/boutique-theme.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="dashboard-sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo-title">LUNETTE GIFTS</div>
+                <div class="sidebar-logo-role">Owner Business Management</div>
+            </div>
+
+            <ul class="sidebar-nav">
+                <li class="sidebar-link active" data-tab="tab-overview">
+                    <span>📊</span> Overview & Attention
+                </li>
+                <li class="sidebar-link" data-tab="tab-orders">
+                    <span>📦</span> Orders & Photos ZIP
+                </li>
+                <li class="sidebar-link" data-tab="tab-products">
+                    <span>🖼️</span> Frames & Photo Rules
+                </li>
+                <li class="sidebar-link" data-tab="tab-inventory">
+                    <span>🏷️</span> Inventory & Stock
+                </li>
+                <li class="sidebar-link" data-tab="tab-workers">
+                    <span>👥</span> Worker Activity & Monitoring
+                </li>
+                <li class="sidebar-link" data-tab="tab-expenses">
+                    <span>💰</span> Expenses & Profit
+                </li>
+                <li class="sidebar-link" data-tab="tab-customers">
+                    <span>🛍️</span> Customers
+                </li>
+                <li class="sidebar-link" data-tab="tab-reviews">
+                    <span>⭐</span> Review Moderation
+                </li>
+                <li class="sidebar-link" data-tab="tab-coupons">
+                    <span>🎟️</span> Coupons & Offers
+                </li>
+                <li class="sidebar-link" data-tab="tab-insights">
+                    <span>💡</span> Insights & Predictions
+                </li>
+                <li class="sidebar-link" data-tab="tab-reports">
+                    <span>📈</span> Reports Export
+                </li>
+                <li class="sidebar-link" data-tab="tab-settings">
+                    <span>⚙️</span> Business Settings
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <div>
+                    <span style="font-size: 11px; color: #786C68; display: block;">Active User:</span>
+                    <strong class="user-tag" id="admin-user-tag">Owner</strong>
+                </div>
+                <button class="logout-btn" onclick="adminLogout()">Logout</button>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="dashboard-main">
+
+            <!-- TAB 1: OVERVIEW & ATTENTION -->
+            <div id="tab-overview" class="tab-pane">
+                <div class="dashboard-header">
+                    <div>
+                        <h1 class="dashboard-title">Boutique Executive Overview</h1>
+                        <p class="dashboard-desc">Factual, simple business monitoring designed for boutique owners.</p>
+                    </div>
+                    <a href="../" target="_blank" class="btn-secondary" style="font-size: 12px; padding: 8px 16px;">
+                        👁️ View Live Boutique Store
+                    </a>
+                </div>
+
+                <!-- WHAT NEEDS YOUR ATTENTION? (CRITICAL FOR OWNER) -->
+                <div class="attention-card">
+                    <div class="attention-title">
+                        <span>🔔</span> WHAT NEEDS YOUR ATTENTION?
+                    </div>
+                    <div class="attention-items-grid" id="attention-items-container">
+                        <!-- Populated by admin.js -->
+                    </div>
+                </div>
+
+                <!-- PERIOD SWITCHER: TODAY, MONTH, YEAR -->
+                <div class="metrics-period-bar">
+                    <h3 style="font-size: 16px; color: #2C2523;">Business Performance Snapshot</h3>
+                    <div class="period-tabs">
+                        <button class="period-tab active" data-period="today" onclick="switchPeriod('today')">Today</button>
+                        <button class="period-tab" data-period="month" onclick="switchPeriod('month')">This Month</button>
+                        <button class="period-tab" data-period="year" onclick="switchPeriod('year')">This Year</button>
+                    </div>
+                </div>
+
+                <!-- METRICS GRID -->
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Confirmed Revenue</div>
+                        <div class="metric-value" id="metric-sales">₹0</div>
+                        <div class="metric-note">Paid & confirmed orders</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">Total Orders Placed</div>
+                        <div class="metric-value" id="metric-orders">0</div>
+                        <div class="metric-note">Orders logged in period</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">Recorded Expenses</div>
+                        <div class="metric-value" id="metric-expenses">₹0</div>
+                        <div class="metric-note">Material, packaging, utilities</div>
+                    </div>
+
+                    <div class="metric-card" style="border-left: 4px solid #5B7B66;">
+                        <div class="metric-label">Estimated Net Profit</div>
+                        <div class="metric-value" id="metric-profit" style="color: #5B7B66;">₹0</div>
+                        <div class="metric-note">Revenue minus expenses estimate</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: ORDER MANAGEMENT -->
+            <div id="tab-orders" class="tab-pane" style="display: none;">
+                <div class="dash-panel">
+                    <div class="panel-header">
+                        <div>
+                            <h2 class="panel-title">Order Management & Customer Photos</h2>
+                            <p class="dashboard-desc">Inspect customer photo uploads, download ZIP archives, and verify payments.</p>
+                        </div>
+                        <div class="search-filter-box">
+                            <input type="text" class="dash-input" id="admin-order-search" placeholder="Search order #, name, phone..." oninput="loadOrders()">
+                            <button class="btn-action" onclick="loadOrders()">Search</button>
+                        </div>
+                    </div>
+
+                    <table class="dash-table">
+                        <thead>
+                            <tr>
+                                <th>Order Number</th>
+                                <th>Customer</th>
+                                <th>Delivery Zone</th>
+                                <th>Total</th>
+                                <th>Order Status</th>
+                                <th>Payment</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-orders-tbody">
+                            <!-- Populated via admin.js -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB 3: PRODUCTS & FRAME PHOTO COUNT CONFIGURATION (STORED IN DB!) -->
+            <div id="tab-products" class="tab-pane" style="display: none;">
+                <!-- Frame Photo Configuration Box -->
+                <div class="dash-panel" style="border-left: 4px solid #C46D7E;">
+                    <div class="panel-header">
+                        <div>
+                            <h2 class="panel-title">Frame Photo Rules (Database Controlled)</h2>
+                            <p class="dashboard-desc">
+                                Configure the required number of customer photos for each photo frame variant.
+                                <strong>Changes here directly govern customer upload slots without touching code.</strong>
+                            </p>
+                        </div>
+                    </div>
+
+                    <table class="dash-table">
+                        <thead>
+                            <tr>
+                                <th>Frame Variant</th>
+                                <th>Dimensions</th>
+                                <th>Selling Price</th>
+                                <th>Required Photos (DB Rule)</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-variants-tbody">
+                            <!-- Populated via admin.js -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Products Table -->
+                <div class="dash-panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">All Gifting Products</h2>
+                    </div>
+
+                    <table class="dash-table">
+                        <thead>
+                            <tr>
+                                <th>Product Name</th>
+                                <th>Category</th>
+                                <th>Base Price</th>
+                                <th>Customization Fee</th>
+                                <th>Min Qty</th>
+                                <th>Current Stock</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-products-tbody">
+                            <!-- Populated via admin.js -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB 4: INVENTORY & AUDIT TRAIL -->
+            <div id="tab-inventory" class="tab-pane" style="display: none;">
+                <div class="dash-panel">
+                    <div class="panel-header">
+                        <div>
+                            <h2 class="panel-title">Live Stock & Inventory</h2>
+                            <p class="dashboard-desc">Items with stock below their safety threshold trigger automated alerts.</p>
+                        </div>
+                        <button class="btn-action" onclick="loadInventory()">↻ Refresh</button>
+                    </div>
+
+                    <table class="dash-table">
+                        <thead>
+                            <tr>
+                                <th>Product Name</th>
+                                <th>Category</th>
+                                <th>Stock Level</th>
+                                <th>Low Stock Threshold</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-inventory-tbody">
+                            <!-- Populated via admin.js -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB 5: WORKER MONITORING (CRITICAL BUSINESS FEATURE) -->
+            <div id="tab-workers" class="tab-pane" style="display: none;">
+                <!-- Worker Performance Cards -->
+                <div class="dash-panel">
+                    <div class="panel-header">
+                        <div>
+                            <h2 class="panel-title">Staff Activity & Real-Time Presence</h2>
+                            <p class="dashboard-desc">Objective metrics recorded directly from staff terminal activity.</p>
+                        </div>
+                    </div>
+
+                    <table class="dash-table" style="margin-bottom: 24px;">
+                        <thead>
+                            <tr>
+                                <th>Staff Name</th>
+                                <th>Status</th>
+                                <th>Orders Created</th>
+                                <th>Status Changes</th>
+                                <th>Photo Downloads</th>
+                                <th>Last Active</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-worker-perf-tbody">
+                            <!-- Populated via admin.js -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Append-Only Activity Log Table with Period Filters -->
+                <div class="dash-panel">
+                    <div class="panel-header">
+                        <div>
+                            <h2 class="panel-title">Append-Only Staff Activity Log</h2>
+                            <p class="dashboard-desc">Tamper-proof chronological audit trail of all staff order entries and downloads.</p>
+                        </div>
+                        <div class="search-filter-box">
+                            <select class="dash-input" onchange="loadWorkerActivities(this.value)">
+                                <option value="TODAY">Today's Activity</option>
+                                <option value="YESTERDAY">Yesterday</option>
+                                <option value="THIS_WEEK">This Week</option>
+                                <option value="THIS_MONTH">This Month</option>
+                                <option value="ALL">All Recorded Activity</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <table class="dash-table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Staff Member</th>
+                                <th>Activity Type</th>
+                                <th>Order Ref</th>
+                                <th>Action Details</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-worker-activity-tbody">
+                            <!-- Populated via admin.js -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB 6: EXPENSE MANAGEMENT & NET PROFIT -->
+            <div id="tab-expenses" class="tab-pane" style="display: none;">
+                <div class="dash-panel">
+                    <div class="panel-header">
+                        <div>
+                            <h2 class="panel-title">Boutique Operational Expenses</h2>
+                            <p class="dashboard-desc">Record material, packaging, delivery, and utility costs to compute real estimated profit.</p>
+                        </div>
+                        <div>
+                            <button class="btn-primary" onclick="document.getElementById('add-expense-modal').classList.add('active')">
+                                + Add New Expense
+                            </button>
+                        </div>
+                    </div>
+
+                    <div style="background: #FAF7F2; padding: 14px 20px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 14px; font-weight: 600; color: #2C2523;">Total Recorded Expenses:</span>
+                        <strong style="font-size: 20px; color: #A85364;" id="total-expenses-display">₹0</strong>
+                    </div>
+
+                    <table class="dash-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Category</th>
+                                <th>Description</th>
+                                <th>Amount</th>
+                                <th>Recorded By</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-expenses-tbody">
+                            <!-- Populated via admin.js -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB 7: CUSTOMER DIRECTORY -->
+            <div id="tab-customers" class="tab-pane" style="display: none;">
+                <div class="dash-panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">Customer Relationship Directory</h2>
+                    </div>
+
+                    <table class="dash-table">
+                        <thead>
+                            <tr>
+                                <th>Customer Name</th>
+                                <th>Phone</th>
+                                <th>Total Orders</th>
+                                <th>Lifetime Value</th>
+                                <th>Last Order</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-customers-tbody">
+                            <!-- Populated via admin.js -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB 8: REVIEWS MODERATION -->
+            <div id="tab-reviews" class="tab-pane" style="display: none;">
+                <div class="dash-panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">Customer Reviews Moderation</h2>
+                    </div>
+
+                    <table class="dash-table">
+                        <thead>
+                            <tr>
+                                <th>Reviewer</th>
+                                <th>Rating</th>
+                                <th>Feedback</th>
+                                <th>Visibility Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-reviews-tbody">
+                            <!-- Populated via admin.js -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB 9: COUPONS -->
+            <div id="tab-coupons" class="tab-pane" style="display: none;">
+                <div class="dash-panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">Coupons & Promotional Offers</h2>
+                    </div>
+
+                    <table class="dash-table">
+                        <thead>
+                            <tr>
+                                <th>Coupon Code</th>
+                                <th>Discount</th>
+                                <th>Min Order</th>
+                                <th>Usage Count</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-coupons-tbody">
+                            <!-- Populated via admin.js -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB 10: INSIGHTS & PREDICTIONS -->
+            <div id="tab-insights" class="tab-pane" style="display: none;">
+                <div class="dash-panel">
+                    <div class="panel-header">
+                        <div>
+                            <h2 class="panel-title">Smart Business Suggestions</h2>
+                            <p class="dashboard-desc">Data-backed operational recommendations with root causes and suggested actions.</p>
+                        </div>
+                    </div>
+                    <div id="admin-insights-container">
+                        <!-- Populated via admin.js -->
+                    </div>
+
+                    <h3 style="font-size: 16px; margin: 30px 0 14px;">Demand Projections & Statistical Trends</h3>
+                    <div id="admin-predictions-container">
+                        <!-- Populated via admin.js -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 11: REPORTS EXPORT -->
+            <div id="tab-reports" class="tab-pane" style="display: none;">
+                <div class="dash-panel">
+                    <div class="panel-header">
+                        <div>
+                            <h2 class="panel-title">Exportable Business Reports (CSV)</h2>
+                            <p class="dashboard-desc">Download complete data sheets for accounting, audit, and tax filing.</p>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+                        <a href="javascript:void(0)" onclick="downloadAdminFile('/api/admin/reports/orders/csv', 'orders-csv.csv'); return false;" class="category-card" style="display: block; text-decoration: none;">
+                            <div style="font-size: 28px; margin-bottom: 8px;">📑</div>
+                            <h4 style="font-size: 15px; margin-bottom: 4px;">Orders Report</h4>
+                            <p style="font-size: 12px; color: #786C68;">Complete orders, customer info, delivery charges & totals</p>
+                        </a>
+
+                        <a href="javascript:void(0)" onclick="downloadAdminFile('/api/admin/reports/inventory/csv', 'inventory-csv.csv'); return false;" class="category-card" style="display: block; text-decoration: none;">
+                            <div style="font-size: 28px; margin-bottom: 8px;">📦</div>
+                            <h4 style="font-size: 15px; margin-bottom: 4px;">Inventory Report</h4>
+                            <p style="font-size: 12px; color: #786C68;">Stock levels, unit prices, and replenishment thresholds</p>
+                        </a>
+
+                        <a href="javascript:void(0)" onclick="downloadAdminFile('/api/admin/reports/expenses/csv', 'expenses-csv.csv'); return false;" class="category-card" style="display: block; text-decoration: none;">
+                            <div style="font-size: 28px; margin-bottom: 8px;">💰</div>
+                            <h4 style="font-size: 15px; margin-bottom: 4px;">Expenses Report</h4>
+                            <p style="font-size: 12px; color: #786C68;">Categorized business expenditures and receipts</p>
+                        </a>
+
+                        <a href="javascript:void(0)" onclick="downloadAdminFile('/api/admin/reports/worker-activities/csv', 'worker-activities-csv.csv'); return false;" class="category-card" style="display: block; text-decoration: none;">
+                            <div style="font-size: 28px; margin-bottom: 8px;">👥</div>
+                            <h4 style="font-size: 15px; margin-bottom: 4px;">Staff Activity Log</h4>
+                            <p style="font-size: 12px; color: #786C68;">Append-only record of workshop operations</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 12: BUSINESS SETTINGS -->
+            <div id="tab-settings" class="tab-pane" style="display: none;">
+                <div class="dash-panel" style="max-width: 600px;">
+                    <div class="panel-header">
+                        <h2 class="panel-title">Boutique Configuration Settings</h2>
+                    </div>
+
+                    <form onsubmit="saveSettings(event)">
+                        <div style="margin-bottom: 14px;">
+                            <label style="font-size: 12px; font-weight: 600;">Business Name</label>
+                            <input type="text" class="input-field" id="setting-business_name">
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+                            <div>
+                                <label style="font-size: 12px; font-weight: 600;">Phone</label>
+                                <input type="text" class="input-field" id="setting-phone">
+                            </div>
+                            <div>
+                                <label style="font-size: 12px; font-weight: 600;">Email</label>
+                                <input type="email" class="input-field" id="setting-email">
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 14px;">
+                            <label style="font-size: 12px; font-weight: 600;">Instagram Profile URL</label>
+                            <input type="text" class="input-field" id="setting-instagram">
+                        </div>
+
+                        <div style="margin-bottom: 14px;">
+                            <label style="font-size: 12px; font-weight: 600;">UPI ID for Scan & Pay</label>
+                            <input type="text" class="input-field" id="setting-upi_id">
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px;">
+                            <div>
+                                <label style="font-size: 12px; font-weight: 600;">Madurai Delivery Charge (₹)</label>
+                                <input type="number" class="input-field" id="setting-delivery_madurai">
+                            </div>
+                            <div>
+                                <label style="font-size: 12px; font-weight: 600;">Outside Madurai Delivery Charge (₹)</label>
+                                <input type="number" class="input-field" id="setting-delivery_outside">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-primary" style="padding: 12px 24px;">Save Settings</button>
+                    </form>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- MODAL: ORDER DETAILS & PHOTO PREVIEW -->
+    <div class="modal-backdrop" id="admin-order-details-modal">
+        <div class="modal-container" style="max-width: 720px; padding: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="font-size: 20px;">Order Details — <span id="modal-order-number-title"></span></h3>
+                <button class="modal-close-btn" onclick="document.getElementById('admin-order-details-modal').classList.remove('active')">✕</button>
+            </div>
+
+            <div id="modal-order-customer-info" style="background: #FAF7F2; padding: 12px 16px; border-radius: 8px; font-size: 13px; margin-bottom: 18px;"></div>
+
+            <div id="modal-order-items-list"></div>
+
+            <input type="hidden" id="modal-order-id-hidden">
+            <div style="margin-top: 18px; border-top: 1px solid #EFE4D8; padding-top: 16px; display: flex; gap: 14px; align-items: flex-end;">
+                <div style="flex: 1;">
+                    <label style="font-size: 12px; font-weight: 600;">Update Production Status</label>
+                    <select class="input-field" id="modal-order-status-select" style="margin: 4px 0 0;">
+                        <option value="ORDER_PLACED">ORDER_PLACED</option>
+                        <option value="PAYMENT_CONFIRMED">PAYMENT_CONFIRMED</option>
+                        <option value="DESIGN_PENDING">DESIGN_PENDING</option>
+                        <option value="DESIGN_APPROVED">DESIGN_APPROVED</option>
+                        <option value="IN_PRODUCTION">IN_PRODUCTION</option>
+                        <option value="READY">READY</option>
+                        <option value="OUT_FOR_DELIVERY">OUT_FOR_DELIVERY</option>
+                        <option value="DELIVERED">DELIVERED</option>
+                        <option value="CANCELLED">CANCELLED</option>
+                    </select>
+                </div>
+                <div style="flex: 1;">
+                    <label style="font-size: 12px; font-weight: 600;">Status Notes</label>
+                    <input type="text" class="input-field" id="modal-order-status-notes" placeholder="e.g. Design verified with customer" style="margin: 4px 0 0;">
+                </div>
+                <button class="btn-primary" onclick="saveAdminOrderStatus()" style="padding: 10px 18px;">Update</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: PAYMENT VERIFICATION -->
+    <div class="modal-backdrop" id="payment-verify-modal">
+        <div class="modal-container" style="max-width: 480px; padding: 24px; text-align: center;">
+            <h3 style="font-size: 18px; margin-bottom: 12px;">Verify Customer Payment</h3>
+            <p style="font-size: 13px; color: #786C68; margin-bottom: 14px;">Order: <strong id="verify-order-num"></strong></p>
+            <div style="font-size: 13px; margin-bottom: 12px;">Reference: <strong id="verify-order-ref"></strong></div>
+
+            <div id="verify-proof-container" style="margin-bottom: 16px;"></div>
+
+            <input type="hidden" id="verify-order-id-hidden">
+            <input type="text" class="input-field" id="verify-notes" placeholder="Optional audit notes" style="margin-bottom: 18px;">
+
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button class="btn-secondary" onclick="document.getElementById('payment-verify-modal').classList.remove('active')">Cancel</button>
+                <button class="btn-secondary" style="color: #A85364; border-color: #F7CCD6;" onclick="submitPaymentVerification('REJECTED')">Reject Payment</button>
+                <button class="btn-primary" onclick="submitPaymentVerification('CONFIRMED')">Confirm Payment ✓</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CONFIGURE FRAME PHOTO COUNT (STORED IN DB!) -->
+    <div class="modal-backdrop" id="edit-variant-modal">
+        <div class="modal-container" style="max-width: 460px; padding: 24px;">
+            <h3 style="font-size: 18px; margin-bottom: 14px;">Configure Frame Photo Count & Price</h3>
+            <p style="font-size: 12px; color: #786C68; margin-bottom: 16px;">
+                Changes made here are stored in the database and automatically control the customer photo upload slots.
+            </p>
+
+            <input type="hidden" id="edit-variant-id">
+            <div style="margin-bottom: 12px;">
+                <label style="font-size: 12px; font-weight: 600;">Variant Name</label>
+                <input type="text" class="input-field" id="edit-variant-name" required>
+            </div>
+
+            <div style="margin-bottom: 12px;">
+                <label style="font-size: 12px; font-weight: 600;">Dimensions</label>
+                <input type="text" class="input-field" id="edit-variant-dims">
+            </div>
+
+            <div style="margin-bottom: 12px;">
+                <label style="font-size: 12px; font-weight: 600;">Selling Price (₹)</label>
+                <input type="number" step="0.01" class="input-field" id="edit-variant-price" required>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="font-size: 12px; font-weight: 600; color: #C46D7E;">Required Number of Photos * (Database Rule)</label>
+                <input type="number" min="1" max="50" class="input-field" id="edit-variant-photos" required style="border-color: #E892A2;">
+            </div>
+
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button class="btn-secondary" onclick="document.getElementById('edit-variant-modal').classList.remove('active')">Cancel</button>
+                <button class="btn-primary" onclick="saveVariantConfiguration()">Save Configuration</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ADJUST INVENTORY -->
+    <div class="modal-backdrop" id="adjust-stock-modal">
+        <div class="modal-container" style="max-width: 440px; padding: 24px;">
+            <h3 style="font-size: 18px; margin-bottom: 10px;">Adjust Inventory Stock</h3>
+            <div id="adjust-stock-product-name" style="font-size: 13px; color: #786C68; margin-bottom: 16px;"></div>
+
+            <input type="hidden" id="adjust-stock-product-id">
+            <div style="margin-bottom: 14px;">
+                <label style="font-size: 12px; font-weight: 600;">Stock Change Quantity (+ for addition, - for removal) *</label>
+                <input type="number" class="input-field" id="adjust-stock-qty" placeholder="e.g. +50 or -5" required>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="font-size: 12px; font-weight: 600;">Adjustment Reason * (Required for Audit Trail)</label>
+                <input type="text" class="input-field" id="adjust-stock-reason" placeholder="e.g. Restocked batch from supplier" required>
+            </div>
+
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button class="btn-secondary" onclick="document.getElementById('adjust-stock-modal').classList.remove('active')">Cancel</button>
+                <button class="btn-primary" onclick="submitStockAdjustment()">Apply Adjustment</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD EXPENSE -->
+    <div class="modal-backdrop" id="add-expense-modal">
+        <div class="modal-container" style="max-width: 460px; padding: 24px;">
+            <h3 style="font-size: 18px; margin-bottom: 16px;">Record Business Expense</h3>
+
+            <form id="add-expense-form" onsubmit="submitAddExpense(event)">
+                <div style="margin-bottom: 12px;">
+                    <label style="font-size: 12px; font-weight: 600;">Expense Category *</label>
+                    <select class="input-field" id="expense-category" required>
+                        <option value="MATERIAL">Material (Wood, Acrylic, Sheets)</option>
+                        <option value="PACKAGING">Packaging (Boxes, Ribbons, Bubblewrap)</option>
+                        <option value="DELIVERY">Delivery & Courier Charges</option>
+                        <option value="ELECTRICITY">Electricity & Workshop Utilities</option>
+                        <option value="ADVERTISING">Advertising & Promotions</option>
+                        <option value="OTHER">Other Miscellaneous</option>
+                    </select>
+                </div>
+
+                <div style="margin-bottom: 12px;">
+                    <label style="font-size: 12px; font-weight: 600;">Amount (₹) *</label>
+                    <input type="number" step="0.01" class="input-field" id="expense-amount" placeholder="e.g. 750" required>
+                </div>
+
+                <div style="margin-bottom: 12px;">
+                    <label style="font-size: 12px; font-weight: 600;">Expense Date *</label>
+                    <input type="date" class="input-field" id="expense-date">
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="font-size: 12px; font-weight: 600;">Description *</label>
+                    <input type="text" class="input-field" id="expense-desc" placeholder="e.g. Purchased 20 photo frame glass sheets" required>
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn-secondary" onclick="document.getElementById('add-expense-modal').classList.remove('active')">Cancel</button>
+                    <button type="submit" class="btn-primary">Record Expense</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/config.js"></script>
+    <script src="../js/boutique.js"></script>
+    <script src="../js/admin.js"></script>
+</body>
+</html>
