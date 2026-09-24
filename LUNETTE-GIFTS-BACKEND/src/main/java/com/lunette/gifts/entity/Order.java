@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name = "orders")
 public class Order {
@@ -19,8 +19,9 @@ public class Order {
     private String orderNumber; // e.g. LG-10024
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_user_id")
-    private UserAccount customer;
+@JoinColumn(name = "customer_user_id")
+@JsonIgnore
+private UserAccount customer;
 
     @Column(nullable = false, length = 100)
     private String customerName;
