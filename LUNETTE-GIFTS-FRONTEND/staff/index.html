@@ -18,13 +18,13 @@
             </div>
 
             <ul class="sidebar-nav">
-                <li class="sidebar-link active" onclick="switchStaffTab('staff-tab-entry')">
+                <li class="sidebar-link active" onclick="switchStaffTab('staff-tab-entry', this)">
                     <span>📝</span> Walk-in / Phone Order
                 </li>
-                <li class="sidebar-link" onclick="switchStaffTab('staff-tab-orders')">
+                <li class="sidebar-link" onclick="switchStaffTab('staff-tab-orders', this)">
                     <span>📦</span> Orders & Status
                 </li>
-                <li class="sidebar-link" onclick="switchStaffTab('staff-tab-inventory')">
+               <li class="sidebar-link" onclick="switchStaffTab('staff-tab-inventory', this)">
                     <span>🏷️</span> Live Stock & Inventory
                 </li>
             </ul>
@@ -46,11 +46,7 @@
                     <h1 class="dashboard-title">Staff Workshop Terminal</h1>
                     <p class="dashboard-desc">Assist walk-in clients, intake customer photos, and track production progress.</p>
                 </div>
-              <a href="../index.html"
-   target="_blank"
-   rel="noopener noreferrer"
-   class="btn-secondary"
-   style="font-size: 12px; padding: 8px 16px;">
+              <a href="/" target="_blank" class="btn-secondary">
     👁️ View Live Boutique Store
 </a>
             </div>
@@ -294,17 +290,25 @@
 <script src="../js/boutique.js"></script>
 <script src="../js/staff.js"></script>
     <script>
-        function switchStaffTab(paneId) {
-            document.querySelectorAll('.staff-pane').forEach(p => p.style.display = 'none');
-            document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+       function switchStaffTab(paneId, clickedLink) {
+    document.querySelectorAll('.staff-pane').forEach(p => {
+        p.style.display = 'none';
+    });
 
-            const target = document.getElementById(paneId);
-            if (target) target.style.display = 'block';
+    document.querySelectorAll('.sidebar-link').forEach(l => {
+        l.classList.remove('active');
+    });
 
-            if (event && event.currentTarget) {
-                event.currentTarget.classList.add('active');
-            }
-        }
+    const target = document.getElementById(paneId);
+
+    if (target) {
+        target.style.display = 'block';
+    }
+
+    if (clickedLink) {
+        clickedLink.classList.add('active');
+    }
+}
     </script>
 </body>
 </html>
