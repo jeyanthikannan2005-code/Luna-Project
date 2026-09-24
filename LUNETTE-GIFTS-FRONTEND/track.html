@@ -179,7 +179,9 @@
             const errBox = document.getElementById('tracking-error-box');
 
             try {
-                const res = await fetch(`/api/store/orders/track/${encodeURIComponent(num)}`);
+                const res = await fetch(
+    apiUrl(`/api/store/orders/track/${encodeURIComponent(num)}`)
+);
                 if (!res.ok) {
                     resBox.style.display = 'none';
                     errBox.style.display = 'block';
