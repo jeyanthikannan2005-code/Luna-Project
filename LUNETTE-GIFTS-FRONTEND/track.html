@@ -179,7 +179,7 @@
             const errBox = document.getElementById('tracking-error-box');
 
             try {
-                const res = await fetch(
+const res = await fetch(
     apiUrl(`/api/store/orders/track/${encodeURIComponent(num)}`)
 );
                 if (!res.ok) {
