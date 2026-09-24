@@ -1,4 +1,3 @@
-```javascript
 /**
  * LUNETTE GIFTS — OWNER / ADMIN DASHBOARD JAVASCRIPT
  * Beginner-friendly dashboard, order management with ZIP photo download,
@@ -141,7 +140,9 @@ async function loadDashboardSummary() {
         renderAttentionBanner(dashboardData.attentionNeeded);
         renderPeriodMetrics(currentPeriod);
 
-    } catch (e) {}
+    } catch (e) {
+        console.error('Dashboard summary error:', e);
+    }
 }
 
 function renderAttentionBanner(items) {
@@ -249,9 +250,13 @@ async function loadOrders() {
             }
         );
 
+        if (!res.ok) {
+            throw new Error('Failed to load orders');
+        }
+
         const orders = await res.json();
 
-        if (orders.length === 0) {
+        if (!Array.isArray(orders) || orders.length === 0) {
 
             tbody.innerHTML = `
                 <tr>
@@ -305,7 +310,6 @@ async function loadOrders() {
                 </td>
 
                 <td>
-
                     ${
                         o.paymentStatus === 'CONFIRMED'
 
@@ -321,10 +325,10 @@ async function loadOrders() {
                                 style="color: #856404; background: #FFF3CD;"
                                 onclick="openPaymentVerifyModal(
                                     ${o.id},
-                                    '${o.orderNumber}',
-                                    '${o.paymentReference || ''}',
-                                    '${o.paymentProofUrl || ''}'
-                                )">
+                                    '${String(o.orderNumber || '').replace(/'/g, "\\'")}',
+                                    '${String(o.paymentReference || '').replace(/'/g, "\\'")}',
+                                    '${String(o.paymentProofUrl || '').replace(/'/g, "\\'")}'
+                                ">
 
                                 Verify
 
@@ -351,7 +355,7 @@ async function loadOrders() {
                             title="Download ZIP bundle"
                             onclick="downloadAdminFile(
                                 '/api/admin/orders/' + ${o.id} + '/download-zip',
-                                'ORDER_' + '${o.orderNumber}' + '.zip'
+                                'ORDER_' + '${String(o.orderNumber || '').replace(/'/g, "\\'")}' + '.zip'
                             )">
 
                             ZIP
@@ -366,6 +370,8 @@ async function loadOrders() {
         `).join('');
 
     } catch (e) {
+
+        console.error('Orders error:', e);
 
         tbody.innerHTML = `
             <tr>
@@ -403,29 +409,45 @@ async function openAdminOrderDetails(orderId) {
                 'admin-order-details-modal'
             );
 
-        document.getElementById(
+        const titleElement = document.getElementById(
             'modal-order-number-title'
-        ).textContent = o.orderNumber;
+        );
 
-        document.getElementById(
+        if (titleElement) {
+            titleElement.textContent = o.orderNumber;
+        }
+
+        const customerInfoElement = document.getElementById(
             'modal-order-customer-info'
-        ).innerHTML = `
-            <strong>${o.customerName}</strong>
-            (${o.customerPhone})
-            <br>
-            ${o.shippingAddress}
-            <br>
-            PIN: ${o.pinCode}
-            (${o.deliveryZone})
-        `;
+        );
 
-        document.getElementById(
+        if (customerInfoElement) {
+            customerInfoElement.innerHTML = `
+                <strong>${o.customerName}</strong>
+                (${o.customerPhone})
+                <br>
+                ${o.shippingAddress}
+                <br>
+                PIN: ${o.pinCode}
+                (${o.deliveryZone})
+            `;
+        }
+
+        const statusSelect = document.getElementById(
             'modal-order-status-select'
-        ).value = o.orderStatus;
+        );
 
-        document.getElementById(
+        if (statusSelect) {
+            statusSelect.value = o.orderStatus;
+        }
+
+        const orderIdHidden = document.getElementById(
             'modal-order-id-hidden'
-        ).value = o.id;
+        );
+
+        if (orderIdHidden) {
+            orderIdHidden.value = o.id;
+        }
 
 
         // Render Items and Photos
@@ -435,158 +457,166 @@ async function openAdminOrderDetails(orderId) {
                 'modal-order-items-list'
             );
 
-        itemsContainer.innerHTML =
-            o.items.map(item => `
+        if (itemsContainer) {
 
-                <div
-                    style="
-                        background: #FAF7F2;
-                        border: 1px solid #EADBCE;
-                        border-radius: 8px;
-                        padding: 14px;
-                        margin-bottom: 12px;
-                    "
-                >
+            const items = Array.isArray(o.items)
+                ? o.items
+                : [];
+
+            itemsContainer.innerHTML =
+                items.map(item => `
 
                     <div
                         style="
-                            display: flex;
-                            justify-content: space-between;
-                            align-items: center;
-                            margin-bottom: 8px;
+                            background: #FAF7F2;
+                            border: 1px solid #EADBCE;
+                            border-radius: 8px;
+                            padding: 14px;
+                            margin-bottom: 12px;
                         "
                     >
 
-                        <strong
+                        <div
                             style="
-                                font-size: 14px;
-                                color: #2C2523;
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                                margin-bottom: 8px;
                             "
                         >
 
-                            ${item.productName}
-                            —
-                            ${item.variantName}
-                            (Qty: ${item.quantity})
-
-                        </strong>
-
-                        <span style="font-weight: 700;">
-                            ₹${item.itemSubtotal}
-                        </span>
-
-                    </div>
-
-
-                    ${
-                        item.customizationSelected
-
-                        ? `
-                            <div
+                            <strong
                                 style="
-                                    font-size: 12px;
-                                    color: #C46D7E;
-                                    margin-bottom: 6px;
+                                    font-size: 14px;
+                                    color: #2C2523;
                                 "
                             >
 
-                                🌸 Customization Instructions:
-                                "${item.customizationInstructions || 'None'}"
+                                ${item.productName}
+                                —
+                                ${item.variantName}
+                                (Qty: ${item.quantity})
 
-                            </div>
-                          `
+                            </strong>
 
-                        : ''
-                    }
+                            <span style="font-weight: 700;">
+                                ₹${item.itemSubtotal}
+                            </span>
 
+                        </div>
 
-                    <div
-                        style="
-                            font-size: 12px;
-                            font-weight: 600;
-                            color: #786C68;
-                            margin-bottom: 6px;
-                        "
-                    >
-
-                        Customer Photos:
-
-                    </div>
-
-
-                    <div
-                        style="
-                            display: flex;
-                            gap: 8px;
-                            flex-wrap: wrap;
-                        "
-                    >
 
                         ${
-                            item.photos &&
-                            item.photos.length > 0
+                            item.customizationSelected
 
-                            ? item.photos.map(p => `
-
+                            ? `
                                 <div
                                     style="
-                                        width: 75px;
-                                        height: 75px;
-                                        border-radius: 6px;
-                                        overflow: hidden;
-                                        border: 1px solid #EFE4D8;
-                                        position: relative;
+                                        font-size: 12px;
+                                        color: #C46D7E;
+                                        margin-bottom: 6px;
                                     "
                                 >
 
-                                    <img
-                                        src="${p.fileUrl}"
-                                        style="
-                                            width: 100%;
-                                            height: 100%;
-                                            object-fit: cover;
-                                        "
-                                        alt="${p.originalFilename}"
-                                    >
-
-                                    <a
-                                        href="${p.fileUrl}"
-                                        target="_blank"
-                                        style="
-                                            position: absolute;
-                                            bottom: 2px;
-                                            right: 2px;
-                                            background: rgba(0,0,0,0.6);
-                                            color: #fff;
-                                            font-size: 10px;
-                                            padding: 2px 4px;
-                                            border-radius: 4px;
-                                        "
-                                    >
-                                        View
-                                    </a>
+                                    🌸 Customization Instructions:
+                                    "${item.customizationInstructions || 'None'}"
 
                                 </div>
-
-                            `).join('')
-
-                            : `
-                                <span
-                                    style="
-                                        font-size: 12px;
-                                        color: #786C68;
-                                    "
-                                >
-                                    No photos attached
-                                </span>
                               `
+
+                            : ''
                         }
+
+
+                        <div
+                            style="
+                                font-size: 12px;
+                                font-weight: 600;
+                                color: #786C68;
+                                margin-bottom: 6px;
+                            "
+                        >
+
+                            Customer Photos:
+
+                        </div>
+
+
+                        <div
+                            style="
+                                display: flex;
+                                gap: 8px;
+                                flex-wrap: wrap;
+                            "
+                        >
+
+                            ${
+                                item.photos &&
+                                item.photos.length > 0
+
+                                ? item.photos.map(p => `
+
+                                    <div
+                                        style="
+                                            width: 75px;
+                                            height: 75px;
+                                            border-radius: 6px;
+                                            overflow: hidden;
+                                            border: 1px solid #EFE4D8;
+                                            position: relative;
+                                        "
+                                    >
+
+                                        <img
+                                            src="${p.fileUrl}"
+                                            style="
+                                                width: 100%;
+                                                height: 100%;
+                                                object-fit: cover;
+                                            "
+                                            alt="${p.originalFilename || 'Customer photo'}"
+                                        >
+
+                                        <a
+                                            href="${p.fileUrl}"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style="
+                                                position: absolute;
+                                                bottom: 2px;
+                                                right: 2px;
+                                                background: rgba(0,0,0,0.6);
+                                                color: #fff;
+                                                font-size: 10px;
+                                                padding: 2px 4px;
+                                                border-radius: 4px;
+                                            "
+                                        >
+                                            View
+                                        </a>
+
+                                    </div>
+
+                                `).join('')
+
+                                : `
+                                    <span
+                                        style="
+                                            font-size: 12px;
+                                            color: #786C68;
+                                        "
+                                    >
+                                        No photos attached
+                                    </span>
+                                  `
+                            }
+
+                        </div>
 
                     </div>
 
-                </div>
-
-            `).join('');
+                `).join('');
+        }
 
 
         if (modal) {
@@ -594,6 +624,8 @@ async function openAdminOrderDetails(orderId) {
         }
 
     } catch (e) {
+
+        console.error('Order details error:', e);
 
         showToast(
             e.message,
@@ -676,18 +708,30 @@ function openPaymentVerifyModal(
             'payment-verify-modal'
         );
 
-    document.getElementById(
+    const orderIdHidden = document.getElementById(
         'verify-order-id-hidden'
-    ).value = orderId;
+    );
 
-    document.getElementById(
+    if (orderIdHidden) {
+        orderIdHidden.value = orderId;
+    }
+
+    const orderNumElement = document.getElementById(
         'verify-order-num'
-    ).textContent = orderNum;
+    );
 
-    document.getElementById(
+    if (orderNumElement) {
+        orderNumElement.textContent = orderNum;
+    }
+
+    const refElement = document.getElementById(
         'verify-order-ref'
-    ).textContent =
-        ref || 'None provided';
+    );
+
+    if (refElement) {
+        refElement.textContent =
+            ref || 'None provided';
+    }
 
 
     const proofContainer =
@@ -695,38 +739,42 @@ function openPaymentVerifyModal(
             'verify-proof-container'
         );
 
-    if (proofUrl) {
+    if (proofContainer) {
 
-        proofContainer.innerHTML = `
-            <a
-                href="${proofUrl}"
-                target="_blank"
-            >
+        if (proofUrl) {
 
-                <img
-                    src="${proofUrl}"
-                    style="
-                        max-height: 180px;
-                        border-radius: 8px;
-                        border: 1px solid #EFE4D8;
-                    "
+            proofContainer.innerHTML = `
+                <a
+                    href="${proofUrl}"
+                    target="_blank"
+                    rel="noopener noreferrer"
                 >
 
-            </a>
-        `;
+                    <img
+                        src="${proofUrl}"
+                        style="
+                            max-height: 180px;
+                            border-radius: 8px;
+                            border: 1px solid #EFE4D8;
+                        "
+                    >
 
-    } else {
+                </a>
+            `;
 
-        proofContainer.innerHTML = `
-            <span
-                style="
-                    color: #786C68;
-                    font-size: 12px;
-                "
-            >
-                No screenshot uploaded.
-            </span>
-        `;
+        } else {
+
+            proofContainer.innerHTML = `
+                <span
+                    style="
+                        color: #786C68;
+                        font-size: 12px;
+                    "
+                >
+                    No screenshot uploaded.
+                </span>
+            `;
+        }
     }
 
     if (modal) {
@@ -819,6 +867,10 @@ async function loadProductsAndVariants() {
                 headers: adminHeaders()
             }
         );
+
+        if (!res.ok) {
+            throw new Error('Failed to load products');
+        }
 
         const products = await res.json();
 
@@ -944,8 +996,8 @@ async function loadProductsAndVariants() {
                                     class="btn-action"
                                     onclick="openEditVariantModal(
                                         ${v.id},
-                                        '${v.name}',
-                                        '${v.dimensions}',
+                                        '${String(v.name || '').replace(/'/g, "\\'")}',
+                                        '${String(v.dimensions || '').replace(/'/g, "\\'")}',
                                         ${v.price},
                                         ${v.requiredPhotos}
                                     )"
@@ -963,7 +1015,9 @@ async function loadProductsAndVariants() {
             }
         }
 
-    } catch (e) {}
+    } catch (e) {
+        console.error('Products error:', e);
+    }
 }
 
 
@@ -1100,6 +1154,10 @@ async function loadInventory() {
             }
         );
 
+        if (!res.ok) {
+            throw new Error('Failed to load inventory');
+        }
+
         const items = await res.json();
 
         tbody.innerHTML =
@@ -1167,7 +1225,7 @@ async function loadInventory() {
                                 class="btn-action"
                                 onclick="openAdjustStockModal(
                                     ${p.id},
-                                    '${p.name}',
+                                    '${String(p.name || '').replace(/'/g, "\\'")}',
                                     ${p.stockQuantity}
                                 )"
                             >
@@ -1183,7 +1241,9 @@ async function loadInventory() {
                 `;
             }).join('');
 
-    } catch (e) {}
+    } catch (e) {
+        console.error('Inventory error:', e);
+    }
 }
 
 
@@ -1314,6 +1374,10 @@ async function loadWorkers() {
             }
         );
 
+        if (!res.ok) {
+            throw new Error('Failed to load workers');
+        }
+
         const workers = await res.json();
 
         tbody.innerHTML =
@@ -1378,7 +1442,9 @@ async function loadWorkers() {
 
             `).join('');
 
-    } catch (e) {}
+    } catch (e) {
+        console.error('Workers error:', e);
+    }
 }
 
 
@@ -1404,9 +1470,13 @@ async function loadWorkerActivities(
             }
         );
 
+        if (!res.ok) {
+            throw new Error('Failed to load activity logs');
+        }
+
         const logs = await res.json();
 
-        if (logs.length === 0) {
+        if (!Array.isArray(logs) || logs.length === 0) {
 
             tbody.innerHTML = `
                 <tr>
@@ -1473,6 +1543,8 @@ async function loadWorkerActivities(
 
     } catch (e) {
 
+        console.error('Worker activity error:', e);
+
         tbody.innerHTML = `
             <tr>
                 <td colspan="5"
@@ -1506,6 +1578,10 @@ async function loadWorkerPerformance() {
                 headers: adminHeaders()
             }
         );
+
+        if (!res.ok) {
+            throw new Error('Failed to load worker performance');
+        }
 
         const perf = await res.json();
 
@@ -1571,7 +1647,9 @@ async function loadWorkerPerformance() {
 
             `).join('');
 
-    } catch (e) {}
+    } catch (e) {
+        console.error('Worker performance error:', e);
+    }
 }
 
 
@@ -1597,6 +1675,10 @@ async function loadExpenses() {
             }
         );
 
+        if (!res.ok) {
+            throw new Error('Failed to load expenses');
+        }
+
         const expenses = await res.json();
 
         let total = 0;
@@ -1604,7 +1686,7 @@ async function loadExpenses() {
         tbody.innerHTML =
             expenses.map(e => {
 
-                total += e.amount;
+                total += Number(e.amount) || 0;
 
                 return `
 
@@ -1658,12 +1740,18 @@ async function loadExpenses() {
                 `;
             }).join('');
 
-        document.getElementById(
+        const totalDisplay = document.getElementById(
             'total-expenses-display'
-        ).textContent =
-            `₹${total}`;
+        );
 
-    } catch (e) {}
+        if (totalDisplay) {
+            totalDisplay.textContent =
+                `₹${total}`;
+        }
+
+    } catch (e) {
+        console.error('Expenses error:', e);
+    }
 }
 
 
@@ -1771,13 +1859,17 @@ async function deleteExpenseItem(id) {
 
     try {
 
-        await fetch(
+        const res = await fetch(
             apiUrl(`/api/admin/expenses/${id}`),
             {
                 method: 'DELETE',
                 headers: adminHeaders()
             }
         );
+
+        if (!res.ok) {
+            throw new Error('Failed to delete expense');
+        }
 
         showToast(
             'Expense removed'
@@ -1786,7 +1878,12 @@ async function deleteExpenseItem(id) {
         loadExpenses();
         loadDashboardSummary();
 
-    } catch (e) {}
+    } catch (e) {
+        showToast(
+            e.message,
+            'error'
+        );
+    }
 }
 
 
@@ -1811,6 +1908,10 @@ async function loadCustomers() {
                 headers: adminHeaders()
             }
         );
+
+        if (!res.ok) {
+            throw new Error('Failed to load customers');
+        }
 
         const customers = await res.json();
 
@@ -1855,7 +1956,9 @@ async function loadCustomers() {
 
             `).join('');
 
-    } catch (e) {}
+    } catch (e) {
+        console.error('Customers error:', e);
+    }
 }
 
 
@@ -1881,6 +1984,10 @@ async function loadReviews() {
             }
         );
 
+        if (!res.ok) {
+            throw new Error('Failed to load reviews');
+        }
+
         const reviews = await res.json();
 
         tbody.innerHTML =
@@ -1895,7 +2002,7 @@ async function loadReviews() {
                     </td>
 
                     <td>
-                        ${'★'.repeat(r.rating)}
+                        ${'★'.repeat(Number(r.rating) || 0)}
                     </td>
 
                     <td>
@@ -1923,7 +2030,9 @@ async function loadReviews() {
 
             `).join('');
 
-    } catch (e) {}
+    } catch (e) {
+        console.error('Reviews error:', e);
+    }
 }
 
 
@@ -1931,7 +2040,7 @@ async function toggleReviewApproval(id) {
 
     try {
 
-        await fetch(
+        const res = await fetch(
             apiUrl(
                 `/api/admin/reviews/${id}/toggle-approval`
             ),
@@ -1941,13 +2050,22 @@ async function toggleReviewApproval(id) {
             }
         );
 
+        if (!res.ok) {
+            throw new Error('Failed to update review');
+        }
+
         showToast(
             'Review visibility updated'
         );
 
         loadReviews();
 
-    } catch (e) {}
+    } catch (e) {
+        showToast(
+            e.message,
+            'error'
+        );
+    }
 }
 
 
@@ -1972,6 +2090,10 @@ async function loadCoupons() {
                 headers: adminHeaders()
             }
         );
+
+        if (!res.ok) {
+            throw new Error('Failed to load coupons');
+        }
 
         const coupons = await res.json();
 
@@ -2025,7 +2147,9 @@ async function loadCoupons() {
 
             `).join('');
 
-    } catch (e) {}
+    } catch (e) {
+        console.error('Coupons error:', e);
+    }
 }
 
 
@@ -2033,7 +2157,7 @@ async function toggleCouponActive(id) {
 
     try {
 
-        await fetch(
+        const res = await fetch(
             apiUrl(
                 `/api/admin/coupons/${id}/toggle`
             ),
@@ -2043,13 +2167,22 @@ async function toggleCouponActive(id) {
             }
         );
 
+        if (!res.ok) {
+            throw new Error('Failed to update coupon');
+        }
+
         showToast(
             'Coupon status updated'
         );
 
         loadCoupons();
 
-    } catch (e) {}
+    } catch (e) {
+        showToast(
+            e.message,
+            'error'
+        );
+    }
 }
 
 
@@ -2077,6 +2210,10 @@ async function loadInsights() {
                 headers: adminHeaders()
             }
         );
+
+        if (!res.ok) {
+            throw new Error('Failed to load insights');
+        }
 
         const suggestions =
             await res.json();
@@ -2120,6 +2257,10 @@ async function loadInsights() {
             }
         );
 
+        if (!predRes.ok) {
+            throw new Error('Failed to load predictions');
+        }
+
         const preds =
             await predRes.json();
 
@@ -2146,7 +2287,9 @@ async function loadInsights() {
                 `).join('');
         }
 
-    } catch (e) {}
+    } catch (e) {
+        console.error('Insights error:', e);
+    }
 }
 
 
@@ -2165,6 +2308,10 @@ async function loadSettings() {
             }
         );
 
+        if (!res.ok) {
+            throw new Error('Failed to load settings');
+        }
+
         const settings =
             await res.json();
 
@@ -2180,7 +2327,9 @@ async function loadSettings() {
             }
         });
 
-    } catch (e) {}
+    } catch (e) {
+        console.error('Settings error:', e);
+    }
 }
 
 
@@ -2328,7 +2477,9 @@ async function downloadAdminFile(
         link.download =
             filename;
 
+        document.body.appendChild(link);
         link.click();
+        link.remove();
 
         URL.revokeObjectURL(
             link.href
@@ -2343,4 +2494,3 @@ async function downloadAdminFile(
         );
     }
 }
-```
